@@ -4,7 +4,9 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tristan Lejeune · Book / 2026</title>
-<meta name="description" content="Le book de Tristan Lejeune. Master Business Dev. Trois projets : Ruliz, Eatrail, Jobfinder." />
+<meta name="description" content="" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="googlebot" content="noindex, nofollow" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1217,25 +1219,23 @@
 
           <div class="face back">
             <div class="sheen"></div>
-            <h2 style="margin-top: 30px;">On <em>en parle</em> ?</h2>
-            <p class="lead">Si l'un de ces projets vous a accroché · ou si vous cherchez un Business Dev qui a déjà saigné des dents sur le terrain · je serai ravi d'échanger.</p>
-            <div style="margin: 8px 0;">
-              <span class="status-pill">DISPONIBLE / 2026</span>
-            </div>
-            <div style="margin-top: 6px;">
-              <div class="contact-row">
-                <span class="k">EMAIL</span>
-                <a href="mailto:tristanlejeune33@gmail.com">tristanlejeune33@gmail.com</a>
-              </div>
+            <h2 style="margin-top: 60px;">Vous voulez<br/><em>en savoir plus</em> ?</h2>
+            <p class="lead" style="margin-top: 14px;">
+              Cette version du book ne contient pas mes coordonnées directes. Pour me contacter, deux options :
+            </p>
+            <div style="margin-top: 18px;">
               <div class="contact-row">
                 <span class="k">LINKEDIN</span>
                 <a href="https://www.linkedin.com/in/tristan-le-jeune-0260b2205/" target="_blank">linkedin.com/in/tristan-le-jeune</a>
               </div>
               <div class="contact-row">
-                <span class="k">PHONE</span>
-                <a href="tel:+33683180502">06.83.18.05.02</a>
+                <span class="k">CV / EMAIL</span>
+                <span style="font-size: 12.5px;">Demandez-moi le lien du book complet</span>
               </div>
             </div>
+            <p style="margin-top: 22px; font-size: 12px; color: var(--grey-2); font-style: italic;">
+              Cette page est intentionnellement limitée. Les recruteurs en contact direct disposent du lien privé du book complet, qui inclut email et téléphone.
+            </p>
             <span class="pnum">P. 09</span>
           </div>
         </div>
@@ -1309,154 +1309,4 @@
     for (let i = 0; i < NSTARS; i++) {
       const s = stars[i];
       const prevK = 200 / (s.z + 0.0001);
-      const px = s.x * prevK + CX;
-      const py = s.y * prevK + CY;
-      s.z -= speed * 4 * dt;
-      if (s.z <= 1) { spawn(s, true); continue; }
-      const k = 200 / s.z;
-      const x = s.x * k + CX;
-      const y = s.y * k + CY;
-      if (x < -20 || x > W + 20 || y < -20 || y > H + 20) { spawn(s, true); continue; }
-      const sizeBase = (1 - s.z / 1000) * 2.2;
-      const size = Math.max(0.3, sizeBase) * s.intensity;
-      const alpha = Math.min(1, (1 - s.z / 1000) * 1.4) * s.intensity;
-      const stretch = Math.min(40, speed * 2.6);
-      if (stretch > 1.2) {
-        ctx.strokeStyle = s.color;
-        ctx.globalAlpha = alpha * 0.85;
-        ctx.lineWidth = size;
-        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(x, y); ctx.stroke();
-      } else {
-        ctx.fillStyle = s.color;
-        ctx.globalAlpha = alpha;
-        ctx.beginPath(); ctx.arc(x, y, size, 0, Math.PI * 2); ctx.fill();
-      }
-    }
-    ctx.globalAlpha = 1;
-    warpHud.textContent = `WARP × ${speed.toFixed(1)}`;
-    const lat = (42 + Math.sin(cur / 800) * 6).toFixed(2);
-    const lng = (Math.cos(cur / 600) * 12).toFixed(2);
-    coordsEl.textContent = `${lat}° N · ${lng}° E`;
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-})();
-
-/* ===========================================================
-   FLIP-BOOK + ENTRY-ZOOM ENGINE
-   =========================================================== */
-(function () {
-  const stage = document.getElementById('stage');
-  const book  = document.getElementById('book');
-  const pages = Array.from(document.querySelectorAll('.page'));
-  const N = pages.length;
-  const SEGMENTS = N + 1;
-  const counterEl = document.getElementById('pageCounter');
-  const barEl     = document.getElementById('pageBar');
-  const prevBtn   = document.getElementById('prevBtn');
-  const nextBtn   = document.getElementById('nextBtn');
-  const TOTAL_FACES = 10;
-
-  function update() {
-    const rect = stage.getBoundingClientRect();
-    const total = stage.offsetHeight - window.innerHeight;
-    const scrolled = Math.min(Math.max(-rect.top, 0), total);
-    const t = total > 0 ? scrolled / total : 0;
-    const sceneT = t * SEGMENTS;
-
-    const entryProgress = Math.max(0, Math.min(1, sceneT));
-    const eased = 1 - Math.pow(1 - entryProgress, 3);
-    const scale = 0.55 + 0.45 * eased;
-    const z = -1200 + 1200 * eased;
-    const opacity = Math.min(1, eased * 1.2);
-    const tilt = (1 - eased) * -10;
-    book.style.transform = `translateZ(${z}px) rotateX(${tilt}deg) scale(${scale})`;
-    book.style.opacity = opacity.toFixed(3);
-
-    const continuousFlip = Math.max(0, sceneT - 1);
-    pages.forEach((page, i) => {
-      let p = continuousFlip - i;
-      p = Math.max(0, Math.min(1, p));
-      const e = p < 1 ? 1 - Math.pow(1 - p, 3) : 1;
-      const angle = -180 * e;
-      const lift = Math.sin(p * Math.PI) * 14;
-      page.style.transform = `translateZ(${lift}px) rotateY(${angle}deg)`;
-      if (p > 0 && p < 1) page.style.zIndex = 100;
-      else if (p >= 1)    page.style.zIndex = 10 + (N - i);
-      else                page.style.zIndex = 60 - i;
-    });
-
-    const faceIdx = Math.min(TOTAL_FACES - 1, Math.round(continuousFlip * 2));
-    const pageNum = Math.min(TOTAL_FACES, faceIdx + 1);
-    counterEl.textContent = String(pageNum).padStart(2, '0') + ' / ' + String(TOTAL_FACES).padStart(2, '0');
-    barEl.style.setProperty('--pct', (continuousFlip / N * 100).toFixed(1) + '%');
-
-    prevBtn.disabled = (continuousFlip <= 0.001);
-    nextBtn.disabled = (continuousFlip >= N - 0.001);
-  }
-
-  function scrollToSegment(seg) {
-    const total = stage.offsetHeight - window.innerHeight;
-    window.scrollTo({ top: (seg / SEGMENTS) * total, behavior: 'smooth' });
-  }
-  function currentSegment() {
-    const rect = stage.getBoundingClientRect();
-    const total = stage.offsetHeight - window.innerHeight;
-    const scrolled = Math.min(Math.max(-rect.top, 0), total);
-    return total > 0 ? (scrolled / total) * SEGMENTS : 0;
-  }
-  prevBtn.addEventListener('click', () => {
-    const seg = currentSegment();
-    scrollToSegment(Math.max(0, Math.floor(seg - 0.05)));
-  });
-  nextBtn.addEventListener('click', () => {
-    const seg = currentSegment();
-    scrollToSegment(Math.min(SEGMENTS, Math.floor(seg + 0.05) + 1));
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
-      e.preventDefault(); nextBtn.click();
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      e.preventDefault(); prevBtn.click();
-    }
-  });
-
-  let raf = null;
-  function onScroll() {
-    if (raf) return;
-    raf = requestAnimationFrame(() => { update(); raf = null; });
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', update);
-  update();
-})();
-
-/* ===========================================================
-   INTRO · vintage fade-out, then book reveals
-   =========================================================== */
-(function () {
-  const intro = document.getElementById('intro');
-  if (!intro) return;
-  let entered = false;
-  function enterBook() {
-    if (entered) return;
-    entered = true;
-    intro.classList.add('exit');
-    setTimeout(() => {
-      intro.style.display = 'none';
-      document.body.classList.remove('intro-active');
-    }, 1100);
-  }
-  // Allow input only after the reveal animation finishes
-  setTimeout(() => {
-    intro.addEventListener('click', enterBook, { once: true });
-    document.addEventListener('keydown', enterBook, { once: true });
-  }, 1900);
-  // Auto-skip after 8s
-  setTimeout(enterBook, 8000);
-})();
-</script>
-
-</body>
-</html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+      c
